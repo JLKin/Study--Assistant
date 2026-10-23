@@ -6,7 +6,7 @@ Windows 桌面学习辅助工具，提供课程视频播放监测、章节切换
 
 ## 下载与使用
 
-- [下载 Windows x64 免安装包](https://github.com/Wangyibo0703/zhihuishu-study-assistant/releases/download/v0.1.0/%E6%99%BA%E6%85%A7%E6%A0%91%E5%AD%A6%E4%B9%A0%E5%8A%A9%E6%89%8B-%E6%B5%8B%E8%AF%95%E7%89%88v0.1-win-x64.zip)
+- [下载 Windows x64 免安装包](https://github.com/Wangyibo0703/zhihuishu-study-assistant/releases/download/v0.1.0/zhihuishu-study-assistant-v0.1.0-win-x64.zip)
 - [查看测试版发布说明与全部附件](https://github.com/Wangyibo0703/zhihuishu-study-assistant/releases/tag/v0.1.0)
 - [使用说明](docs/使用说明.md)
 
