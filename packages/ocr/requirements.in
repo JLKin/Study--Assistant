@@ -1,0 +1,3 @@
+# Stage 3 local CPU OCR, validated on Windows x64 / CPython 3.12.
+rapidocr==3.10.0
+onnxruntime==1.31.0

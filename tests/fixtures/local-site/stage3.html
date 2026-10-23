@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="utf-8" />
+  <title>阶段3 非计分练习模拟</title>
+  <style>
+    body {
+      font: 18px sans-serif;
+      margin: 32px;
+      max-width: 900px;
+    }
+    button,
+    select {
+      font: inherit;
+      margin: 8px;
+    }
+    video {
+      width: 480px;
+    }
+    [hidden] {
+      display: none;
+    }
+    #practice {
+      border: 2px solid #426;
+      padding: 16px;
+    }
+  </style>
+  <h1>阶段3 本地可控演示</h1>
+  <p>
+    本地fixture；OCR和检索由验收工具显式注入。真实站点待真实环境人工验收。此页面不连接真实平台。
+  </p>
+  <aside>
+    <select id="scenario">
+      <option value="normal">非计分单选</option>
+      <option value="multiple">非计分多选</option>
+      <option value="boolean">判断</option>
+      <option value="exam">正式考试</option>
+      <option value="graded">计分作业</option>
+      <option value="unknown">未知</option>
+      <option value="incomplete">文本残缺</option>
+      <option value="ambiguous">映射不明</option>
+      <option value="wrong">错误后一次纠正</option>
+      <option value="unknown-feedback">提交后未知</option></select
+    ><button id="reset">重置模拟</button>
+  </aside>
+  <main
+    id="course"
+    data-course-id="stage3-course"
+    data-authenticated="true"
+    data-page-kind="course"
+  >
+    <video id="video" src="/stage2.webm" controls loop muted></video>
+    <section
+      id="practice"
+      role="dialog"
+      data-popup-id="popup-1"
+      data-classification="non-graded"
+      data-non-graded="true"
+      data-type="single"
+      data-complete="true"
+    >
+      <strong id="scope">非计分巩固练习，不影响课程成绩</strong>
+      <p id="stem">光合作用需要二氧化碳吗</p>
+      <div id="options"></div>
+      <button id="submit">提交模拟答案</button>
+      <p id="feedback"></p>
+      <button id="close">关闭模拟弹窗</button>
+    </section>
+  </main>
+  <output id="counts"></output>
+  <script>
+    const dialog = document.querySelector('#practice');
+    let video = document.querySelector('#video');
+    const state = {
+      submissions: 0,
+      closes: 0,
+      restores: 0,
+      pauses: 0,
+      manualRevision: 0,
+      generation: 0,
+      receipt: '',
+      feedback: 'unknown',
+      correctTexts: null,
+      mode: 'normal',
+    };
+    const show = () =>
+      (document.querySelector('#counts').textContent =
+        `模拟提交 ${state.submissions} 次；关闭 ${state.closes} 次；恢复 ${state.restores} 次`);
+    function reset(mode = 'normal') {
+      Object.assign(state, {
+        submissions: 0,
+        closes: 0,
+        restores: 0,
+        pauses: 0,
+        manualRevision: 0,
+        receipt: '',
+        feedback: 'unknown',
+        correctTexts: null,
+        mode,
+      });
+      dialog.hidden = false;
+      Object.assign(dialog.dataset, {
+        classification: ['exam', 'graded', 'unknown'].includes(mode) ? mode : 'non-graded',
+        nonGraded: mode === 'unknown' ? 'false' : 'true',
+        type: ['multiple', 'boolean'].includes(mode) ? mode : 'single',
+        complete: mode === 'incomplete' ? 'false' : 'true',
+      });
+      document.querySelector('#scope').textContent =
+        mode === 'exam'
+          ? '正式考试'
+          : mode === 'graded'
+            ? '计分作业，记录成绩'
+            : mode === 'unknown'
+              ? '练习性质不明'
+              : '非计分巩固练习，不影响课程成绩';
+      document.querySelector('#stem').textContent =
+        mode === 'multiple' ? '植物光合作用需要水和二氧化碳吗' : '光合作用需要二氧化碳吗';
+      const texts =
+        mode === 'multiple'
+          ? ['水', '二氧化碳', '氧气']
+          : ['正确', mode === 'ambiguous' ? '正确' : '错误'];
+      document.querySelector('#options').replaceChildren(
+        ...texts.map((text, i) => {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = mode === 'multiple' ? 'checkbox' : 'radio';
+          input.name = 'answer';
+          input.dataset.optionId = String.fromCharCode(65 + i);
+          const span = document.createElement('span');
+          span.textContent = text;
+          label.append(input, span);
+          return label;
+        }),
+      );
+      document.querySelector('#feedback').textContent = '';
+      document.querySelector('#submit').disabled = false;
+      show();
+    }
+    document.querySelector('#reset').onclick = () =>
+      reset(document.querySelector('#scenario').value);
+    document.querySelector('#submit').onclick = () => {
+      state.submissions++;
+      const ids = [...document.querySelectorAll('#options input:checked')]
+        .map((input) => input.dataset.optionId)
+        .sort()
+        .join(',');
+      const expected = state.mode === 'multiple' ? 'A,B' : state.mode === 'wrong' ? 'B' : 'A';
+      state.feedback =
+        state.mode === 'unknown-feedback' ? 'unknown' : ids === expected ? 'correct' : 'incorrect';
+      state.correctTexts =
+        state.feedback === 'incorrect' ? (expected === 'B' ? ['错误'] : ['正确']) : null;
+      document.querySelector('#feedback').textContent =
+        state.feedback === 'correct'
+          ? '正确'
+          : state.feedback === 'incorrect'
+            ? '错误；正确反馈：' + state.correctTexts.join('｜')
+            : '等待平台反馈';
+      document.querySelector('#submit').disabled = state.feedback !== 'incorrect';
+      show();
+    };
+    document.querySelector('#close').onclick = () => {
+      state.closes++;
+      dialog.hidden = true;
+      show();
+    };
+    for (const name of ['pointerdown', 'keydown'])
+      document.addEventListener(
+        name,
+        (event) => {
+          if (event instanceof KeyboardEvent && ['PageDown', 'PageUp', 'Tab'].includes(event.key))
+            return;
+          if (event.isTrusted && event.target.closest('#course')) state.manualRevision++;
+        },
+        true,
+      );
+    window.stage3Fixture = {
+      state,
+      reset,
+      replaceMedia() {
+        const next = video.cloneNode(true);
+        video.replaceWith(next);
+        video = next;
+        state.generation++;
+      },
+      show,
+    };
+    reset();
+  </script>
+</html>

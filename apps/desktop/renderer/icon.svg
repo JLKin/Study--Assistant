@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="智慧树学习助手">
+  <circle cx="48" cy="48" r="47" fill="#2c2e3a" />
+  <circle cx="48" cy="48" r="46.4" fill="none" stroke="#ffffff" stroke-opacity="0.1" />
+  <g fill="none" stroke="#cbf3fb" stroke-width="4" stroke-linecap="round">
+    <ellipse cx="48" cy="48" rx="26.5" ry="10.8" transform="rotate(31 48 48)" />
+    <ellipse cx="48" cy="48" rx="26.5" ry="10.8" transform="rotate(-31 48 48)" />
+  </g>
+  <circle cx="48" cy="48" r="5.2" fill="#cbf3fb" />
+  <circle cx="48" cy="18.8" r="3.5" fill="#cbf3fb" />
+  <circle cx="24.6" cy="62.4" r="3.5" fill="#cbf3fb" />
+  <circle cx="71.4" cy="62.4" r="3.5" fill="#cbf3fb" />
+</svg>

@@ -1,0 +1,39 @@
+# Dependencies and build/release output
+node_modules/
+dist/
+release/
+coverage/
+*.tsbuildinfo
+
+# Local runtime state: login sessions, profiles, screenshots and logs
+data/
+work/
+output/
+outputs/
+shots/
+logs/
+docs/evidence/
+.tmp/
+edge-profile/
+browser-profile/
+session.json
+browser-session.json
+*.log
+*.jsonl
+
+# Credentials and local overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+.npmrc
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

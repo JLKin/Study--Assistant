@@ -1,0 +1,51 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "single",
+      "lines": ["单选", "题干:光合作用需要二氧化碳吗", "A:正确", "B:错误", "结束:2"],
+      "expected": {
+        "type": "single",
+        "stem": "光合作用需要二氧化碳吗",
+        "options": [
+          { "id": "A", "text": "正确" },
+          { "id": "B", "text": "错误" }
+        ],
+        "complete": true
+      }
+    },
+    {
+      "id": "multiple",
+      "lines": ["多选", "题干:下列哪些属于可再生能源", "A:太阳能", "B:风能", "C:煤炭", "结束:3"],
+      "expected": {
+        "type": "multiple",
+        "stem": "下列哪些属于可再生能源",
+        "options": [
+          { "id": "A", "text": "太阳能" },
+          { "id": "B", "text": "风能" },
+          { "id": "C", "text": "煤炭" }
+        ],
+        "complete": true
+      }
+    },
+    {
+      "id": "boolean",
+      "lines": ["判断", "题干:地球围绕太阳公转", "A:正确", "B:错误", "结束:2"],
+      "expected": {
+        "type": "boolean",
+        "stem": "地球围绕太阳公转",
+        "options": [
+          { "id": "A", "text": "正确" },
+          { "id": "B", "text": "错误" }
+        ],
+        "complete": true
+      }
+    },
+    {
+      "id": "incomplete",
+      "lines": ["单选", "题干:光合作用需要二氧化碳吗", "A:正确"],
+      "expected": null
+    },
+    { "id": "blank", "lines": [], "expected": null }
+  ]
+}

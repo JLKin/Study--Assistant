@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>阶段 2 本机可控视频 fixture</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        max-width: 900px;
+        margin: 24px auto;
+      }
+      video {
+        width: 480px;
+        display: block;
+        background: #182739;
+      }
+      button,
+      input {
+        margin: 8px;
+      }
+      #scroll-space {
+        height: 1400px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>阶段 2 本机可控视频 fixture</h1>
+    <p>仅验证本地适配器与受保护动作；真实平台待真实环境人工验收。</p>
+    <video id="stage2-video" src="/stage2.webm" controls autoplay muted loop preload="auto"></video>
+    <button id="manual-play" data-stage2-action="play">人工播放</button>
+    <button id="manual-pause" data-stage2-action="pause">人工暂停</button>
+    <button id="manual-chapter" data-stage2-action="chapter">人工切换章节</button>
+    <button id="manual-course" data-stage2-action="chapter">人工切换课程</button>
+    <button id="manual-popup" data-stage2-action="popup">人工打开弹窗</button>
+    <button id="manual-rate" data-stage2-action="rate">人工设置 1 倍速</button>
+    <button id="manual-rate-150" data-stage2-action="rate">人工设置 1.5 倍速</button>
+    <input
+      id="manual-seek"
+      data-stage2-action="seek"
+      type="range"
+      min="0"
+      max="5"
+      step="0.1"
+      value="0"
+      aria-label="人工调整播放时间"
+    />
+    <form id="graded-form"><button type="submit">计分提交哨兵（禁止自动提交）</button></form>
+    <p>提交次数：<span id="submission-count">0</span></p>
+    <pre id="fixture-status"></pre>
+    <script id="stage1-observation" type="application/json">
+      {
+        "schemaVersion": 1,
+        "courseId": "fixture-course-001",
+        "title": "安全开发示例课程",
+        "authenticated": true,
+        "pageKind": "course",
+        "platformCompleted": false
+      }
+    </script>
+    <script id="stage2-observation" type="application/json"></script>
+    <script>
+      (() => {
+        const video = document.querySelector('#stage2-video');
+        const observation = document.querySelector('#stage2-observation');
+        const storageKey = 'stage2-fixture-runtime-v2';
+        const defaults = () => ({
+          schemaVersion: 2,
+          courseId: 'fixture-course-001',
+          title: '本机视频示例课程',
+          authenticated: true,
+          pageKind: 'course',
+          platformCompleted: false,
+          chapters: [
+            { chapterId: 'chapter-001', title: '章节一', platformCompleted: false },
+            { chapterId: 'chapter-002', title: '章节二', platformCompleted: false },
+          ],
+          currentChapterId: 'chapter-001',
+          player: {
+            chapterId: 'chapter-001',
+            currentTime: 0,
+            duration: 6,
+            playbackRate: 1,
+            paused: false,
+            buffering: false,
+            ended: false,
+          },
+          supportedRates: [1, 1.25, 1.5],
+          popup: 'none',
+          safeToRefresh: true,
+        });
+        let state = defaults();
+        let overrides = {};
+        let history = [];
+        let options = { recoverSucceeds: true, refreshSucceeds: true };
+        try {
+          const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+          if (saved) ({ state, overrides, history, options } = saved);
+        } catch {
+          /* 仅保留本机测试状态；非法测试数据从默认开始。 */
+        }
+        const persist = () =>
+          sessionStorage.setItem(
+            storageKey,
+            JSON.stringify({ state, overrides, history, options }),
+          );
+        function publish() {
+          const native = {
+            chapterId: state.currentChapterId,
+            currentTime: Number.isFinite(video.currentTime) ? video.currentTime : 0,
+            duration: Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 6,
+            playbackRate: video.playbackRate,
+            paused: video.paused,
+            buffering: false,
+            ended: video.ended,
+          };
+          state.player = { ...native, ...overrides, chapterId: state.currentChapterId };
+          observation.textContent = JSON.stringify(state);
+          document.querySelector('#fixture-status').textContent = JSON.stringify(
+            { player: state.player, actions: history.length },
+            null,
+            2,
+          );
+        }
+        function set(patch) {
+          const { player, ...rest } = patch;
+          Object.assign(state, rest);
+          if (player) {
+            Object.assign(overrides, player);
+            if (
+              typeof player.playbackRate === 'number' &&
+              Number.isFinite(player.playbackRate) &&
+              player.playbackRate > 0
+            )
+              video.playbackRate = player.playbackRate;
+            if (typeof player.currentTime === 'number' && Number.isFinite(player.currentTime))
+              video.currentTime = Math.max(0, player.currentTime);
+            if (player.paused === true) video.pause();
+          }
+          publish();
+        }
+        function navigate(chapterId) {
+          if (!state.chapters.some((chapter) => chapter.chapterId === chapterId))
+            throw new Error('无效章节');
+          state.currentChapterId = chapterId;
+          overrides = {};
+          video.currentTime = 0;
+          publish();
+        }
+        async function perform(action) {
+          history.push({ ...action });
+          if (action.type === 'set-rate') {
+            video.playbackRate = action.rate;
+            delete overrides.playbackRate;
+          } else if (action.type === 'recover-play') {
+            if (options.recoverSucceeds) {
+              overrides = {};
+              await video.play();
+            }
+          } else if (action.type === 'navigate') {
+            navigate(action.chapterId);
+            await video.play();
+          } else if (action.type === 'refresh') {
+            if (options.refreshSucceeds)
+              overrides = {
+                currentTime: Math.min(state.player.currentTime + 0.25, state.player.duration - 0.1),
+                paused: false,
+                buffering: false,
+                ended: false,
+              };
+            persist();
+            location.reload();
+            return;
+          } else throw new Error('不支持的模拟动作');
+          publish();
+          persist();
+        }
+        async function scenario(name) {
+          switch (name) {
+            case 'normal':
+              state = defaults();
+              overrides = {};
+              video.currentTime = 0;
+              video.playbackRate = 1;
+              await video.play();
+              break;
+            case 'buffering':
+              video.pause();
+              overrides = { currentTime: 1, paused: false, buffering: true };
+              break;
+            case 'stalled':
+              video.pause();
+              overrides = { currentTime: 1, paused: false, buffering: false };
+              break;
+            case 'rate-lost':
+              video.playbackRate = 1;
+              overrides.playbackRate = 1;
+              break;
+            case 'login-expired':
+              state.authenticated = false;
+              break;
+            case 'chapter-late':
+              video.pause();
+              overrides = {
+                currentTime: 5.2,
+                duration: 6,
+                paused: true,
+                buffering: false,
+                ended: false,
+              };
+              break;
+            case 'ended':
+              video.pause();
+              overrides = {
+                currentTime: 6,
+                duration: 6,
+                paused: true,
+                buffering: false,
+                ended: true,
+              };
+              break;
+            case 'manual-pause':
+              document.querySelector('#manual-pause').click();
+              break;
+            case 'scroll':
+              window.scrollBy(0, 300);
+              break;
+            case 'course-switch':
+              state.courseId = 'fixture-course-002';
+              break;
+            case 'popup':
+              state.popup = 'present';
+              break;
+            case 'graded':
+              state.pageKind = 'graded';
+              break;
+            case 'unknown':
+              state.pageKind = 'unknown';
+              break;
+            default:
+              throw new Error('未知模拟场景');
+          }
+          publish();
+        }
+        window.stage2Fixture = Object.freeze({
+          set,
+          scenario,
+          snapshot: () => JSON.parse(observation.textContent),
+          actions: () => JSON.parse(JSON.stringify(history)),
+          configure: (patch) => {
+            Object.assign(options, patch);
+            persist();
+          },
+          completeChapter: (chapterId, completed = true) => {
+            const chapter = state.chapters.find((item) => item.chapterId === chapterId);
+            if (!chapter) throw new Error('无效章节');
+            chapter.platformCompleted = completed;
+            publish();
+          },
+          delayChapterCompletion: (chapterId, milliseconds) =>
+            setTimeout(() => window.stage2Fixture.completeChapter(chapterId), milliseconds),
+          perform,
+          reset: () => {
+            sessionStorage.removeItem(storageKey);
+            state = defaults();
+            overrides = {};
+            history = [];
+            options = { recoverSucceeds: true, refreshSucceeds: true };
+            video.currentTime = 0;
+            video.playbackRate = 1;
+            publish();
+          },
+        });
+        for (const type of [
+          'loadedmetadata',
+          'play',
+          'pause',
+          'waiting',
+          'playing',
+          'timeupdate',
+          'ratechange',
+          'ended',
+          'seeking',
+        ]) {
+          video.addEventListener(type, publish);
+        }
+        video.addEventListener('loadedmetadata', () => {
+          if (history.at(-1)?.type === 'refresh' && options.refreshSucceeds) {
+            const resumeAt = overrides.currentTime;
+            overrides = {};
+            if (typeof resumeAt === 'number') video.currentTime = resumeAt;
+            void video.play();
+            publish();
+          }
+        });
+        document.querySelector('#manual-play').addEventListener('click', () => {
+          delete overrides.paused;
+          void video.play();
+          publish();
+        });
+        document.querySelector('#manual-pause').addEventListener('click', () => {
+          video.pause();
+          overrides.paused = true;
+          publish();
+        });
+        document
+          .querySelector('#manual-chapter')
+          .addEventListener('click', () =>
+            navigate(state.currentChapterId === 'chapter-001' ? 'chapter-002' : 'chapter-001'),
+          );
+        document.querySelector('#manual-course').addEventListener('click', () => {
+          state.courseId = 'fixture-course-002';
+          publish();
+        });
+        document.querySelector('#manual-popup').addEventListener('click', () => {
+          state.popup = 'present';
+          publish();
+        });
+        document.querySelector('#manual-rate').addEventListener('click', () => {
+          video.playbackRate = 1;
+          overrides.playbackRate = 1;
+          publish();
+        });
+        document.querySelector('#manual-rate-150').addEventListener('click', () => {
+          video.playbackRate = 1.5;
+          overrides.playbackRate = 1.5;
+          publish();
+        });
+        document.querySelector('#manual-seek').addEventListener('input', (event) => {
+          video.currentTime = Number(event.target.value);
+          delete overrides.currentTime;
+          publish();
+        });
+        document.querySelector('#graded-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const count = document.querySelector('#submission-count');
+          count.textContent = String(Number(count.textContent) + 1);
+        });
+        publish();
+      })();
+    </script>
+    <div id="scroll-space">滚动此区域不会触发人工关键操作信号。</div>
+  </body>
+</html>

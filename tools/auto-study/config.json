@@ -1,0 +1,50 @@
+{
+  "$comment": "倍速默认关闭；想让它用真实鼠标点站点 X 1.5 就把 speedPreset 设为 1.5（JS 改 playbackRate 会被判异常，禁止）；seekToRatio 必须保持 null",
+  "progressThreshold": 0.81,
+  "seekToRatio": null,
+  "stopOnDetection": true,
+  "captchaWaitMs": 600000,
+  "entryUrl": "https://onlineweb.zhihuishu.com/onlinestuh5",
+  "cdpPort": 9333,
+  "pollIntervalMs": 900,
+  "popupPollIntervalMs": 400,
+  "playStallMs": 25000,
+  "stallReloadMs": 180000,
+  "maxPopupActionsPerVideo": 12,
+  "answerDelayMs": [
+    900,
+    2000
+  ],
+  "afterCloseDelayMs": [
+    1200,
+    2200
+  ],
+  "afterSwitchDelayMs": [
+    1500,
+    3000
+  ],
+  "courses": "auto",
+  "onlyCourses": [],
+  "skipChapterKeywords": [
+    "期末考试",
+    "考试"
+  ],
+  "headless": false,
+  "keepBrowserOpen": true,
+  "alertBeep": true,
+  "alertBringToFront": true,
+  "useSupervisor": true,
+  "restartFromZero": true,
+  "speedNote": "倍速请自己点站点的 X 1.5；脚本不碰 playbackRate（JS 调会被判异常脚本）",
+  "speedPreset": null,
+  "quizSubmit": true,
+  "quizAnswerDelayMs": [
+    700,
+    1400
+  ],
+  "quizNextDelayMs": [
+    900,
+    1700
+  ],
+  "quizCaptchaWaitMs": 600000
+}

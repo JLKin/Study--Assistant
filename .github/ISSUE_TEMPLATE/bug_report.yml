@@ -1,0 +1,30 @@
+name: 问题反馈
+description: 提交可复现的问题，请先移除个人信息
+title: '[问题] '
+body:
+  - type: markdown
+    attributes:
+      value: '请勿上传 Cookie、账号、浏览器配置、登录会话或完整运行目录。'
+  - type: input
+    id: version
+    attributes:
+      label: 软件版本
+      placeholder: 测试版 v0.1 / 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Windows 与 Edge 版本
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤、预期结果和实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: 脱敏后的错误提示或截图

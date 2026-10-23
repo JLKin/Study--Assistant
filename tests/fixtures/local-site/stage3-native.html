@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="utf-8" /><style>
+    body {
+      font:
+        24px 'Microsoft YaHei',
+        sans-serif;
+      margin: 20px;
+    }
+    .video-study {
+      width: 900px;
+    }
+    .header_userInfo {
+      width: 40px;
+      height: 24px;
+    }
+    video {
+      width: 320px;
+      height: 180px;
+    }
+    .el-dialog__wrapper {
+      position: absolute;
+      left: 30px;
+      top: 250px;
+      width: 1000px;
+      background: white;
+      border: 1px solid #555;
+    }
+    .el-dialog__header,
+    .el-dialog__body,
+    .el-dialog__footer {
+      padding: 16px;
+    }
+    .el-dialog__header {
+      font-size: 18px;
+    }
+    .el-dialog__body {
+      font-size: 30px;
+    }
+    .topic-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .topic-option-item {
+      display: inline-block;
+      width: 50px;
+    }
+    .item-topic {
+      display: inline-block;
+    }
+    .topic-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px;
+      border: 1px solid #222;
+      cursor: pointer;
+    }
+    .iconzhengque1,
+    .iconcuowu1 {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: green;
+    }
+    [hidden] {
+      display: none !important;
+    }
+  </style>
+  <main class="video-study">
+    <div class="header_userInfo">测试</div>
+    <div class="userLinks"><i class="iconheiyemoshi-anquantuichu"></i></div>
+    <div class="source-name">合成课程</div>
+    <span id="lessonOrder">1.1 合成章节</span
+    ><video id="vjs_container_html5_api" src="/media.webm" muted loop></video>
+  </main>
+  <div class="el-dialog__wrapper dialog-test" hidden>
+    <section class="el-dialog" role="dialog">
+      <header class="el-dialog__header">
+        <h4>AI助教小智给你出题啦！学习过程中有问题，随时点我</h4>
+        <p>弹题是为了帮助同学们巩固知识点，不会影响到大家作业和考试的成绩。</p>
+      </header>
+      <div class="el-dialog__body">
+        <div class="el-pagination">
+          <ul class="el-pager">
+            <li class="number active">1</li>
+          </ul>
+        </div>
+        <div class="radio">
+          <p class="topic-title">
+            <span class="title-tit">1.【判断题】</span><span>植物进行光合作用需要二氧化碳吗</span>
+          </p>
+          <ul class="topic-list">
+            <li class="topic-item">
+              <span class="topic-option-item">A.</span>
+              <div class="item-topic">对</div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-option-item">B.</span>
+              <div class="item-topic">错</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <footer class="el-dialog__footer"><div class="btn">提交</div></footer>
+    </section>
+  </div>
+  <script>
+    const state = {
+      submissions: 0,
+      closes: 0,
+      selections: 0,
+      footerClicks: 0,
+      mode: 'correct',
+      single: false,
+    };
+    const popup = document.querySelector('.dialog-test'),
+      media = document.querySelector('video'),
+      footer = document.querySelector('.btn');
+    for (const item of document.querySelectorAll('.topic-item'))
+      item.onclick = () => {
+        for (const other of document.querySelectorAll('.topic-item'))
+          other.classList.remove('selected');
+        item.classList.add('selected');
+      };
+    footer.onclick = () => {
+      state.footerClicks++;
+      if (footer.textContent === '关闭') {
+        state.closes++;
+        popup.hidden = true;
+        return;
+      }
+      state.submissions++;
+      if (state.mode === 'delayed' || state.mode === 'pending') {
+        setTimeout(
+          () => {
+            const marker = document.createElement('span');
+            marker.className = 'right';
+            const icon = document.createElement('i');
+            icon.className = 'iconzhengque1';
+            marker.append(icon);
+            document.querySelector('.topic-title').prepend(marker);
+            footer.textContent = '关闭';
+          },
+          state.mode === 'delayed' ? 180 : 30000,
+        );
+        return;
+      }
+      const marker = document.createElement('span');
+      if (
+        state.mode === 'correct' &&
+        document.querySelector('.topic-item').classList.contains('selected')
+      ) {
+        marker.className = 'right';
+        const icon = document.createElement('i');
+        icon.className = 'iconzhengque1';
+        marker.append(icon);
+      } else if (state.mode === 'incorrect' || state.mode === 'correct') {
+        marker.textContent = '错误';
+        const icon = document.createElement('i');
+        icon.className = 'iconfont iconcuowu1';
+        marker.append(icon);
+      }
+      document.querySelector('.topic-title').prepend(marker);
+      footer.textContent = '关闭';
+    };
+    window.nativeFixture = {
+      state,
+      show(mode = 'correct') {
+        state.mode = mode;
+        popup.hidden = false;
+        media.pause();
+      },
+      showBooleanClick(mode = 'correct') {
+        state.mode = mode;
+        footer.textContent = '关闭';
+        for (const [index, item] of [...document.querySelectorAll('.topic-item')].entries())
+          item.onclick = () => {
+            state.selections++;
+            state.submissions++;
+            const feedback = () => {
+              if (mode === 'unknown' || mode === 'pending') return;
+              if (mode === 'invalid-feedback') {
+                const unknown = document.createElement('span');
+                unknown.className = 'wrong';
+                document.querySelector('.topic-title').prepend(unknown);
+                return;
+              }
+              const marker = document.createElement('span');
+              if (mode !== 'incorrect' && index === 0) {
+                marker.className = 'right';
+                const icon = document.createElement('i');
+                icon.className = 'iconzhengque1';
+                marker.append(icon);
+              } else {
+                marker.textContent = '错误';
+                const icon = document.createElement('i');
+                icon.className = 'iconfont iconcuowu1';
+                marker.append(icon);
+              }
+              document.querySelector('.topic-title').prepend(marker);
+            };
+            if (mode === 'delayed') setTimeout(feedback, 180);
+            else feedback();
+          };
+        popup.hidden = false;
+        media.pause();
+      },
+      showSingle(mode = 'correct', joined = false) {
+        state.mode = mode;
+        state.single = true;
+        footer.textContent = '关闭';
+        document.querySelector('.title-tit').textContent = '【单选题】';
+        document.querySelector('.title-tit').nextElementSibling.textContent =
+          '植物光合作用示意图中请从四种颜色选择蓝色';
+        const list = document.querySelector('.topic-list');
+        list.replaceChildren();
+        for (const [index, text] of ['红色', '蓝色', '绿色', '白色'].entries()) {
+          const item = document.createElement('li');
+          item.className = 'topic-item';
+          const label = document.createElement('span');
+          label.className = 'topic-option-item';
+          label.textContent = String.fromCharCode(65 + index) + (joined ? '' : '.');
+          if (joined) label.style.width = 'auto';
+          const value = document.createElement('div');
+          value.className = 'item-topic';
+          value.textContent = text;
+          item.append(label, value);
+          list.append(item);
+          item.onclick = () => {
+            state.selections++;
+            state.submissions++;
+            item.classList.add('selected');
+            const feedback = () => {
+              if (mode === 'unknown' || mode === 'pending') return;
+              if (mode === 'invalid-feedback') {
+                const unknown = document.createElement('span');
+                unknown.className = 'wrong';
+                document.querySelector('.topic-title').prepend(unknown);
+                return;
+              }
+              const marker = document.createElement('span');
+              if (mode !== 'incorrect' && index === 1) {
+                marker.className = 'right';
+                const icon = document.createElement('i');
+                icon.className = 'iconzhengque1';
+                marker.append(icon);
+              } else {
+                marker.textContent = '错误';
+                const icon = document.createElement('i');
+                icon.className = 'iconfont iconcuowu1';
+                marker.append(icon);
+              }
+              document.querySelector('.topic-title').prepend(marker);
+            };
+            if (mode === 'delayed') setTimeout(feedback, 180);
+            else feedback();
+          };
+        }
+        popup.hidden = false;
+        media.pause();
+      },
+      decorateSingleWithSvg() {
+        for (const item of document.querySelectorAll('.topic-list > li.topic-item')) {
+          const slot = document.createElement('div');
+          slot.style.cssText = 'width:0;height:0';
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('class', 'icon topic-option');
+          svg.setAttribute('aria-hidden', 'true');
+          const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+          use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#iconxuan');
+          svg.append(use);
+          slot.append(svg);
+          item.prepend(slot);
+        }
+        document
+          .querySelector('.el-dialog__body')
+          .append(document.querySelector('.el-dialog__footer'));
+      },
+    };
+  </script>
+</html>

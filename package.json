@@ -1,0 +1,44 @@
+{
+  "name": "zhihuishu-study-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "智慧树学习助手（测试版 v0.1）：桌面端自动刷课，81% 切章、弹题随机作答、两套播放页站点适配",
+  "main": "dist/main.cjs",
+  "author": "氿离",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "setup:electron": "node node_modules/electron/install.js",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:desktop": "npm run build && node scripts/desktop-smoke.mjs",
+    "test:desktop:stage2": "npm run build && node scripts/stage2-desktop-smoke.mjs",
+    "fixture:stage2": "node scripts/stage2-fixture.mjs",
+    "fixture:stage3": "node scripts/stage3-fixture.mjs",
+    "demo:stage3": "node scripts/stage3-demo.mjs",
+    "review:stage3": "node scripts/stage3-manual-review.mjs",
+    "prepare:stage3": "node scripts/stage3-revalidation.mjs",
+    "test:stage3": "vitest run stage3-",
+    "test:ocr:stage3": "vitest run --config vitest.ocr.config.ts",
+    "ocr:stage3": "node scripts/stage3-models.mjs",
+    "test:package": "node scripts/package-smoke.mjs",
+    "format": "prettier --write \"apps/**/*.{ts,css,html}\" \"packages/**/*.ts\" \"scripts/*.mjs\" \"tests/**/*.ts\" \"docs/*.md\" README.md \"*.json\" \"vitest*.config.ts\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,css,html}\" \"packages/**/*.ts\" \"scripts/*.mjs\" \"tests/**/*.ts\" \"docs/*.md\" README.md \"*.json\" \"vitest*.config.ts\"",
+    "package:stage2": "npm run build && node scripts/package.mjs",
+    "package:app": "npm run build && node scripts/package.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.64.1"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "@types/node": "24.10.0",
+    "electron": "44.9.0",
+    "esbuild": "0.28.2",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

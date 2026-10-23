@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>阶段 1 本机模拟课程</title>
+  </head>
+  <body>
+    <h1>阶段 1 本机模拟课程</h1>
+    <p>仅验证只读观察契约。本页没有播放器、学习进度控制或自动提交功能。</p>
+    <p id="course-title">安全开发示例课程</p>
+    <form id="graded-form"><button type="submit">计分页面禁止自动提交（测试哨兵）</button></form>
+    <p id="submission-count">0</p>
+    <script id="stage1-observation" type="application/json">
+      {
+        "schemaVersion": 1,
+        "courseId": "fixture-course-001",
+        "title": "安全开发示例课程",
+        "authenticated": true,
+        "pageKind": "course",
+        "platformCompleted": false
+      }
+    </script>
+    <script>
+      // 测试哨兵由人工或测试脚本触发；适配器从不操作表单。
+      document.querySelector('#graded-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const count = document.querySelector('#submission-count');
+        count.textContent = String(Number(count.textContent) + 1);
+      });
+    </script>
+  </body>
+</html>

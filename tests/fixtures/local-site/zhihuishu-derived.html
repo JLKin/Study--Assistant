@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>脱敏结构派生测试页；非真实智慧树验收</title>
+    <style>
+      body {
+        margin: 20px;
+        min-height: 1800px;
+        font-family: sans-serif;
+      }
+      .header_userInfo,
+      .source-name,
+      .speedBox {
+        padding: 10px;
+      }
+      video {
+        width: 320px;
+        height: 180px;
+      }
+      .speedTab {
+        display: none;
+        padding: 8px;
+      }
+      .speedBox:hover .speedTab {
+        display: inline-block;
+      }
+      .chapterScrollbar li {
+        padding: 8px;
+      }
+      .el-dialog__wrapper {
+        position: fixed;
+        inset: 0;
+        padding: 50px;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <p>由现场脱敏 DOM 结构派生，仅供离线自动测试，不构成真实平台通过证据。</p>
+    <main class="video-study">
+      <div class="header_userInfo">
+        合成登录控件
+        <span class="userLinks"><i class="iconheiyemoshi-anquantuichu"></i></span>
+      </div>
+      <div class="source-name">合成结构回归课程</div>
+      <h2 id="lessonOrder">1.1、合成章节一</h2>
+      <div id="vjs_container">
+        <video id="vjs_container_html5_api" class="vjs-tech" controls muted preload="auto">
+          <source src="/synthetic-derived.webm" type="video/webm" />
+        </video>
+        <div class="speedBox" tabindex="0">
+          倍速
+          <button class="speedTab" rate="1.0">X 1.0</button>
+          <button class="speedTab" rate="1.25">X 1.25</button>
+          <button class="speedTab" rate="1.5">X 1.5</button>
+        </div>
+      </div>
+      <ul class="chapterScrollbar">
+        <li class="clearfix video current_play">
+          <b class="hour">1.1</b>
+          <span class="catalogue_title">合成章节一</span>
+          <b class="time_ico_half"></b><b class="time_icofinish"></b>
+          <span class="time">00:00:05</span>
+        </li>
+        <li class="clearfix video">
+          <b class="hour">1.2</b>
+          <span class="catalogue_title">合成章节二</span>
+          <b class="time_ico_half"></b>
+          <span class="time">00:00:05</span>
+        </li>
+      </ul>
+    </main>
+    <script>
+      window.derivedActions = [];
+      document.querySelectorAll('.speedTab').forEach((option) => {
+        option.addEventListener('click', () => {
+          const rate = Number(option.getAttribute('rate'));
+          document.querySelector('video').playbackRate = rate;
+          window.derivedActions.push({ type: 'set-rate', rate });
+        });
+      });
+    </script>
+  </body>
+</html>
