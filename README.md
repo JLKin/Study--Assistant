@@ -38,12 +38,12 @@
 
 ## 下载，选一种适合你的方式
 
-目前可下载的正式版为 **v0.3.3**。普通使用者无需安装 Node.js 或 Python，准备好 **Windows 10 / 11 64 位系统与 Microsoft Edge** 即可。
+目前可下载的正式版为 **v0.3.4**。普通使用者无需安装 Node.js 或 Python，准备好 **Windows 10 / 11 64 位系统与 Microsoft Edge** 即可。
 
 | 版本                    | 适合怎样使用                                         | 下载                                                                                                                            |
 | :---------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| **安装版 · Setup**      | 希望通过安装向导设置位置，并保留快捷方式和卸载入口。 | [下载安装包](https://github.com/JLKin/Study--Assistant/releases/download/v0.3.3/ZHS-Study-Assistant-0.3.3-win-x64-Setup.exe)    |
-| **免安装版 · Portable** | 希望解压即用，方便自行管理程序目录。                 | [下载压缩包](https://github.com/JLKin/Study--Assistant/releases/download/v0.3.3/ZHS-Study-Assistant-0.3.3-win-x64-Portable.zip) |
+| **安装版 · Setup**      | 希望通过安装向导设置位置，并保留快捷方式和卸载入口。 | [下载安装包](https://github.com/JLKin/Study--Assistant/releases/download/v0.3.4/ZHS-Study-Assistant-0.3.4-win-x64-Setup.exe)    |
+| **免安装版 · Portable** | 希望解压即用，方便自行管理程序目录。                 | [下载压缩包](https://github.com/JLKin/Study--Assistant/releases/download/v0.3.4/ZHS-Study-Assistant-0.3.4-win-x64-Portable.zip) |
 
 [查看最新发布与全部附件 →](https://github.com/JLKin/Study--Assistant/releases/latest)
 
@@ -105,7 +105,7 @@
 <details>
 <summary><b>想从源码运行，应该从哪里开始？</b></summary>
 
-当前公开主分支保留的是较早源码快照，与 v0.3.3 程序包不完全对应。需要直接使用时，请优先下载 Releases 中的程序包。
+当前公开主分支保留的是较早源码快照，与 v0.3.4 程序包不完全对应。需要直接使用时，请优先下载 Releases 中的程序包。
 
 开发环境为 Windows、Node.js 24、npm 与 Microsoft Edge：
 
