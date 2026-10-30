@@ -38,18 +38,20 @@
 
 ## 下载，选一种适合你的方式
 
-目前可下载的正式版为 **v0.5.1**。普通使用者无需安装 Node.js 或 Python，准备好 **Windows 10 / 11 64 位系统与 Microsoft Edge** 即可。
+目前可下载的正式版为 **v0.5.6**。普通使用者无需安装 Node.js 或 Python，准备好 **Windows 10 / 11 64 位系统与 Microsoft Edge** 即可。
 
-这一版重点改善登录与启动稳定性：减少登录跳转被打断的情况，收敛黑屏恢复流程；界面无法恢复时，会显示日志位置与处理建议。
+这一版重点修复反复启动后的浏览器黑屏：调整窗口启动与恢复方式，清理遗留空白页和重复标签，并协调停止、退出与再次开始的顺序。
 
 | 版本                    | 适合怎样使用                                         | 下载                                                                                                                            |
 | :---------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| **安装版 · Setup**      | 希望通过安装向导设置位置，并保留快捷方式和卸载入口。 | [下载安装包](https://github.com/JLKin/Study--Assistant/releases/download/v0.5.1/ZHS-Study-Assistant-0.5.1-win-x64-Setup.exe)    |
-| **免安装版 · Portable** | 希望解压即用，方便自行管理程序目录。                 | [下载压缩包](https://github.com/JLKin/Study--Assistant/releases/download/v0.5.1/ZHS-Study-Assistant-0.5.1-win-x64-Portable.zip) |
+| **安装版 · Setup**      | 希望通过安装向导设置位置，并保留快捷方式和卸载入口。 | [下载安装包](https://github.com/JLKin/Study--Assistant/releases/download/v0.5.6/ZHS-Study-Assistant-0.5.6-win-x64-Setup.exe)    |
+| **免安装版 · Portable** | 希望解压即用，方便自行管理程序目录。                 | [下载压缩包](https://github.com/JLKin/Study--Assistant/releases/download/v0.5.6/ZHS-Study-Assistant-0.5.6-win-x64-Portable.zip) |
 
 [查看最新发布与全部附件 →](https://github.com/JLKin/Study--Assistant/releases/latest)
 
 免安装版请**完整解压**后运行 `智慧树学习助手.exe`，并保留同目录的资源文件。两个程序包均未做代码签名，Windows 可能显示“已发布者未知”。
+
+升级前，请从右下角托盘选择**退出**关闭旧版，再打开新版。空闲时点击窗口右上角的 X 只会隐藏到托盘；原有配置与数据会继续保留。
 
 ## 开始使用
 
@@ -107,7 +109,7 @@
 <details>
 <summary><b>想从源码运行，应该从哪里开始？</b></summary>
 
-当前公开主分支保留的是较早源码快照，与 v0.5.1 程序包不完全对应。需要直接使用时，请优先下载 Releases 中的程序包。
+当前公开主分支保留的是较早源码快照，与 v0.5.6 程序包不完全对应。需要直接使用时，请优先下载 Releases 中的程序包。
 
 开发环境为 Windows、Node.js 24、npm 与 Microsoft Edge：
 
